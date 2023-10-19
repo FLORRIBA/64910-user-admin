@@ -122,8 +122,58 @@ const usersArray = [
 //Obtener el body de la tabla
 const tableBody = document.getElementById("table-body");
 const searchInput = document.querySelector("#search");//BUSCADOR
+const userForm=document.querySelector("form#user-form")
+  
+console.log(userForm)
+//Evento submit en el formulario, se dispara cuando complete correctamente el formulario, recibo el evento evt dentro de la funcion
+userForm.addEventListener("submit",(evt)=>{
+evt.preventDefault() //tener registro dentro de la funcion
+const el =evt.target.elements;
+//Cortar la ejecucion de la funcion callback del evento submit
+//!paswords distintas
+if(el.password.value !== el.password2.value){
+alert('las contraseñas no coinciden')
+return; //para cortar la funcion 
 
-  //Filtro de usuarios
+}
+//!Email ya existe
+const userExist = usersArray.find((user) => {
+  if(user.email ===el.email.value){
+  return true
+}
+  if(userExist){
+    alert('el correo ya existe')
+    return
+  }
+})
+
+
+
+
+console.dir(evt.target.elements.location.value); //del objeto evt obtengo target es la prop de evt que necesito
+
+//OBJETO usuario, va a tner una prop, valor es el de "name"
+const usuarioNuevo = {
+  fullname: el.fullname.value,
+  age: el.age.valueAsNumber,//string a number
+  email: el.email.value,
+  password: el.password.value,
+  avtive: el.active.checked, //propiedad que me da true or false
+  bornDate:new Date(el.fechaNac.value),
+  location: el.location.value,
+  id: 25,
+  image: el.image.value
+
+  
+}
+usersArray.push(usuarioNuevo)
+pintarUsuarios(usersArray)
+
+
+
+
+} )
+//Filtro de usuarios
   searchInput.addEventListener("keyup", (eventito) => {
     console.log(eventito)  //1-Escuchar cuando el usuario presiona una tecla,
   //2-obtener valor del input, 
