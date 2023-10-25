@@ -11,9 +11,10 @@ function formatDate(fecha) {
     });
   
     const fechaFormateada = collator.format(fecha);//la variable collactor tiene predeterminada la funcion .format
-    console.log(fechaFormateada);
+    // console.log(fechaFormateada);
   
     //Devolver fecha en formato correcto
     return fechaFormateada;
+    
   }
   

@@ -21,8 +21,8 @@ body {
         padding: 10px;
     }
     .table-body {
-        tr {
-            &:nth-child(even) {
+        .table-row {
+            &:nth-child(even) {/*tr cuyos hijos serian los pares*/
                 background-color: #333;
             }
             td {
@@ -37,10 +37,11 @@ body {
         border: 1px solid rgb(244, 85, 188);
 }
 
-.table-body .user-image img {
+.table-row .user-image img {
     width: 70px;
     height: 70px;
     border-radius: 50%;
+    object-fit: cover;/*para que no se deforme la imagen*/
 }
 .action-btn {
     background-color: green;
@@ -71,7 +72,7 @@ body {
 }
 .admin-container{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); /*menos de 500px de ancho se va uno debajo del otro, si entran los dos se ponen uno al lado del otro */
     gap: .5rem;
 }
 #user-form{
@@ -97,9 +98,10 @@ body {
 }
 .input-group {
     margin: 0 auto;
-    margin-bottom: .75rem;
+    margin-bottom: .5rem;
     display: flex;
     flex-direction: column;
+    max-width: 400px;
 
     :is(input, textarea, select) {
         padding: .375rem .675rem;
