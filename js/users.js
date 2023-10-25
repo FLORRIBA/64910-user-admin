@@ -123,7 +123,8 @@ const usersArray = [
 const tableBody = document.getElementById("table-body");
 const searchInput = document.querySelector("#search");//BUSCADOR
 const userForm=document.querySelector("form#user-form") //Buscar el form con el id=user-form
-  
+//Buscamos el boton Agregar Usuario
+const submitBtn = userForm.querySelector('button[type=submit].btn-form') 
 
 //Evento submit en el formulario, se dispara cuando complete correctamente el formulario, recibo el evento evt dentro de la funcion
 userForm.addEventListener("submit",(evt)=>{ 
@@ -151,11 +152,19 @@ const userExist = usersArray.find((user) => { //encontrar un user, find=> retorn
     alert('el correo ya existe')
     return
   }
+/*OPERADOR TERNARIO */
+// const id = condicion?condicionTtrue : condicionFalse
+const id = el.id.value ? el.id.value: crypto.randomUUID()
 
-
+  // let id;
+  // if(el.id.value){
+  //   id=el.id.value
+  // }else{
+  //   id=crypto.randomUUID()
+  // }
 
 //OBJETO usuarioNuevo, va a tner una prop, valor es el de "name"
-const usuarioNuevo = {
+const user = {
   fullname: el.fullname.value, //me interesa la propiedad fullname (name input)su valor
   age: el.age.valueAsNumber,//string a number
   email: el.email.value,
@@ -163,18 +172,57 @@ const usuarioNuevo = {
   active: el.active.checked, //propiedad cheked que me da true or false, si la propiedad (Activo esta checkeado o no)
   bornDate:new Date(el.fechaNac.value),//necesito que me convierta la fecha en Timestamp
   location: el.location.value,
-  id: crypto.randomUUID, //new Date().getTime() => id basandome en el tiempo, /FUNCION de js(libreria/API) crypto.randomUUID , GENERA UN id (string unica para c/usuario) RANDOM
+  id: id, //new Date().getTime() => id basandome en el tiempo, /FUNCION de js(libreria/API) crypto.randomUUID , GENERA UN id (string unica para c/usuario) RANDOM
   image: el.image.value
+
  
 }
-// console.log(usuarioNuevo)
-usersArray.push(usuarioNuevo)//agregar al listado el nuevo usuario
+//Tenemos 2 podibles acciones a realizar
+//1) Agregar un usuario nuevo
+//2)Al estar editando deberia reemplazar el usuario a editar con su info actualizada)
+if(el.id.value){
+//Editando              me busca la posicion del usuario
+const indice=usersArray.findIndex(usuario=>{
+if(usuario.id === el.id.value){
+  return true
+}
+})
+//reemplazo el usuario con los datos nuevos del form
+usersArray[indice]=user
+Swal.fire('Usuario Editado')
+
+Swal.fire{
+  title:'Usuario Editado'
+  text: 'los datos del usuario fueron actualizados'
+  icon:'succes'
+  timer:1000
+}
+//al modificar el array necesito refrescar la vista -pintamos para ver los cambios
+
+}else{
+//Agregando un usuario nuevo
+
+usersArray.push(user)//agregar al listado el nuevo usuario
+Swal.fire('Usuario Agregado')
+title:'Usuario Agregado'
+text: 'los datos del usuario fueron agregadoss'
+icon:'succes'
+timer:1000
+}
 pintarUsuarios(usersArray)//para verlo reflejado en nuestra lista, mi array tiene un elemento nuevo (pinta ietra desde el elemnto0 hasta el ultimo que se agrega)
 
-
-
-
 } )
+function resetearFormulario(){
+  userForm.reset() //reseteo el form
+userForm.elements.password.disabled=false;//activo si estaban desactivados  los input pasword
+userForm.elements.password2.disabled=false;
+submitBtn.classList.remove('btn-edit')//remuevo la class editar
+submitBtn.innerText='Agregar usuario'//vuelvo el texto del btn a su valor por defecto
+userForm.elements.nombreCompleto.focus()//el cursor vuelve a nombre 
+}
+
+
+
 //Filtro de usuarios
   searchInput.addEventListener("keyup", (eventito) => {
     // console.log(eventito)  //1-Escuchar cuando el usuario presiona una tecla,
@@ -255,6 +303,8 @@ if(userEdit === undefined){
 }
 // console.log(userEdit)
 const el = userForm.elements;
+
+el.id.value=userEdit.id;
 el.age.value = userEdit.age
 el.fullname.value = userEdit.fullname
 el.email.value = userEdit.email
@@ -268,27 +318,35 @@ el.password.value=userEdit.password;
 el.password.disabled=true;
 el.password2.value=userEdit.password;
 el.password2.disabled=true;
-el.bornDate.value=formatInputDate(userEdit.bornDate)
+el.fechaNac.value=formatInputDate(userEdit.bornDate)
 }
 
 //que el formulario se rellene con los datos de esa persona (excepto contraseña)
 
 
-//cambiar el nombre del boton a  usuario
+
 //trabajar en deshaibilitar los input de contraseña
 
 function formatInputDate(fechaInput){
-  const fecha=new Date(fecha);
+  const fecha=new Date(fechaInput);
   const year=fecha.getFullYear();
-  const month=fecha.getMonth()+1;
+  let month=fecha.getMonth()+1;
   if (month<10){
     month='0'+month
   }
-  const day=fecha.getDate();
+  let day=fecha.getDate();
   if (day<10){
    day='0'+day
   }
-  return `${year} -${month}-${year}`
-
+  return `${year}-${month}-${day}`
 
 }
+
+
+//cambiar el nombre del boton a  usuario
+submitBtn.classList.add('btn-edit');
+submitBtn.innerText='Editar usuario'
+
+
+
+
