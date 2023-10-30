@@ -1,4 +1,3 @@
-
 //Devolver una fecha en forma correcta
 //Este objeto se utiliza para lo que se conoce como ECMAScript Internationalization API. Los constructores para los objetos Collator, NumberFormat, y DateTimeFormat son propiedades de Intl.
 function formatDate(fecha) {
@@ -17,4 +16,19 @@ function formatDate(fecha) {
     return fechaFormateada;
     
   }
+
+  //Seteamos la fecha required format, "yyyy-MM-dd"
+function formatInputDate(fechaInput) {
+  const fecha = new Date(fechaInput); //new OBJETO fecha
+  const year = fecha.getFullYear(); //
+  let month = fecha.getMonth() + 1;//Enero comienza con el 0 (+1)
+  if (month < 10) {
+    month = "0" + month;
+  }
+  let day = fecha.getDate(); //getDate(fecha) dia del mes , getDay(dia) dia de la semana
+  if (day < 10) {
+    day = "0" + day;
+  }
+  return `${year}-${month}-${day}`;
+}
   

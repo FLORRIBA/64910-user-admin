@@ -72,7 +72,7 @@ body {
 }
 .admin-container{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); /*menos de 500px de ancho se va uno debajo del otro, si entran los dos se ponen uno al lado del otro */
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /*menos de 500px de ancho se va uno debajo del otro, si entran los dos se ponen uno al lado del otro */
     gap: .5rem;
 }
 #user-form{
@@ -120,14 +120,14 @@ body {
     border-radius: 3px;
     cursor: pointer;
     border: none;
-    &.btn-edit{
+    &.btn-edit{           /*si mi btn tiene las dos clases.....*/                                    
         background-color: green;
     }
-
 }
 /* .btn-form.btn-edit{
     background-color: green;
 } */
+
 .mb {
     margin-bottom: .75rem;
 }
