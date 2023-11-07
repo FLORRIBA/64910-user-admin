@@ -34,7 +34,8 @@ body {
 
 .user-table :is(th, td) {
     padding: 5px 10px;
-        border: 1px solid rgb(244, 85, 188);
+    border: 1px solid rgb(244, 85, 188);
+    border-collapse: collapse;
 }
 
 .table-row .user-image img {

@@ -1,4 +1,4 @@
-const usersArray = [
+const usersStart = [
   {
     fullname: "John Doe",
     age: 30,
@@ -7,7 +7,7 @@ const usersArray = [
     active: true,
     password: "password123",
     bornDate: new Date("1993-01-01").getTime(),
-    location: 'La Pampa',
+    location: "La Pampa",
     image:
       "https://oyster.ignimgs.com/mediawiki/apis.ign.com/mario-kart-for-wii-u/7/71/Mk8iconyoshi.png?width=1280",
   },
@@ -119,6 +119,20 @@ const usersArray = [
       "https://oyster.ignimgs.com/mediawiki/apis.ign.com/mario-kart-for-wii-u/b/b7/Mk8iconbowser.png?width=325",
   },
 ];
+
+//const userrsArray=JSON.parse (localStorage.getItem("users"))
+
+//Primera vez q se ejecuta la aplicacion (1 sola vez) -- preguntamos HAY ALGO en el localStorage?sino encontro nada ....
+if (localStorage.getItem("users") === null) {
+  //GUARDA en el localStorage con un valor "users" un array vacio
+  //localStorage.setItem("users", JSON.stringify([ ]))
+
+  localStorage.setItem("users", JSON.stringify(usersStart)); // sino encontramos nada en el localStorage, que tome el arrayStart ...(harcodeado)
+}
+
+const usersArray = JSON.parse(localStorage.getItem("users"));
+
+/* ===== Ubico el DOM ======== */
 //Obtener el body de la tabla
 const tableBody = document.getElementById("table-body");
 const searchInput = document.querySelector("#search"); //BUSCADOR
@@ -159,12 +173,12 @@ userForm.addEventListener("submit", (evt) => {
 
   /*OPERADOR TERNARIO -if, else en unamisma linea*/
   //const id = condicion?    condicion True : condicion False
-    const id = el.id.value ? el.id.value    : crypto.randomUUID(); // estoy diciendo lo mismo que lo de abajo
-               // =
+  const id = el.id.value ? el.id.value : crypto.randomUUID(); // estoy diciendo lo mismo que lo de abajo
+  // =
   // let id;
   // if(el.id.value){   //si el elemento id en su value es True => estoY EDITAMDO UN USUARIO
   //   id=el.id.value   // id = al avalor que tenga ese input
-  // }else{             
+  // }else{
   //   id=crypto.randomUUID() //si no existe el ID ingresado en el input "hyden" => es un USUARIO NUEVOlo generamos
   // }
 
@@ -185,34 +199,37 @@ userForm.addEventListener("submit", (evt) => {
   //1) Agregar (CREATE) un usuario nuevo
   //2) Al estar editando (UPDATE) deberia reemplazar el usuario a editar con su info actualizada)
   if (el.id.value) {
-    //EDITANDO USUARIO
-    const indice = usersArray.findIndex((usuario) => { //busco la posicion donde esta ese usuario, finIndex me devuelve la posicion de ese usuario
+    //========= EDITAR USUARIO=======================
+    const indice = usersArray.findIndex((usuario) => {
+      //busco la posicion donde esta ese usuario, finIndex me devuelve la posicion de ese usuario
       if (usuario.id === el.id.value) {
         return true;
       }
     });
     //2)una vez que tengo el usuario=>reemplazo el usuario con los datos nuevos del formulario
-        usersArray[indice] = user;
-        Swal.fire("Usuario Editado");
-        title: "Usuario Editado";
-        text: "los datos del usuario fueron actualizados";
-        icon: "succes";
-        timer: 1000;
+    usersArray[indice] = user;
+    Swal.fire("Usuario Editado");
+    title: "Usuario Editado";
+    text: "los datos del usuario fueron actualizados";
+    icon: "succes";
+    timer: 1000;
   } else {
     //1)Agregando un usuario nuevo
-          usersArray.push(user); //agregar al listado el nuevo usuario
-          Swal.fire("Usuario Agregado");
-          title: "Usuario Agregado";
-          text: "los datos del usuario fueron agregadoss";
-          icon: "succes";
-          timer: 1000;
+    usersArray.push(user); //agregar al listado el nuevo usuario
+    Swal.fire("Usuario Agregado");
+    title: "Usuario Agregado";
+    text: "los datos del usuario fueron agregadoss";
+    icon: "succes";
+    timer: 1000;
   }
   pintarUsuarios(usersArray); //para verlo reflejado en nuestra lista, mi array tiene un elemento nuevo (pinta itera desde el elemnto 0 hasta el ultimo que se agrega)
+  // - Actualizo usersArray
+  actulizarLocalStorage();
 
-resetearFormulario() //llamo a la Funcion
+  resetearFormulario(); //llamo a la Funcion
 });
 
-/*========= Funcion Resetear Formulario */
+/*========= Funcion Resetear Formulario ============= */
 function resetearFormulario() {
   userForm.reset(); //reseteo el form
   userForm.elements.password.disabled = false; //activo si estaban desactivados  los input pasword
@@ -228,10 +245,10 @@ searchInput.addEventListener("keyup", (eventito) => {
   //2-obtener valor del input,
   const inputValue = eventito.target.value.toLowerCase(); //valor(letra ecrita)lo tengo en el eventito.target.value ---leer del evento keyup su valor
   //3-  buscar en todos los usuarios aquellos que tengan ese texto,
-  const usuariosFiltrados = usersArray.filter((usuario) =>       /*FUNCION FLECHA */
+  const usuariosFiltrados = usersArray.filter((usuario /*FUNCION FLECHA */) =>
     usuario.fullname.toLocaleLowerCase().includes(inputValue)
-  ); 
-/* IF */
+  );
+  /* IF */
   // const usuariosFiltrados = usersArray.filter((usuario) => {
   // const nombre = usuario.fullname.toLocaleLowerCase();
   //4- pintar (guardar en el nuevo array) solo los usuarios que hayan coincidido*/
@@ -244,13 +261,14 @@ searchInput.addEventListener("keyup", (eventito) => {
   // console.log(usuariosFiltrados);
 });
 
-//=== Function pintarUsuarios ======================
-function pintarUsuarios() {
+//=== Funcion pintarUsuarios ======================
+
+function pintarUsuarios(arrayPintar) {
   tableBody.innerHTML = ""; //reseteamos todo el html del body de la tabla para poder crear las row correspomdientes ( y for empieza a agregar filas)
   //Iterar el array y agregar un tr por c/alumno que tengamos
-  usersArray.forEach((user, indiceActual) => {
+  arrayPintar.forEach((user, index) => {
     //INSERTAR TABLA DESDE JAVA SCRIPT
-    tableBody.innerHTML += ` 
+  tableBody.innerHTML += ` 
 <tr class="table-row">
     <td class="user-image">
         <img src="${user.image}" alt="${user.fullname} avatar">
@@ -275,47 +293,54 @@ function pintarUsuarios() {
 </tr>`;
   });
 }
-pintarUsuarios();
+
 //('${user.id}')para tomar el user.id como string cuando se llame a la funcion editar
 
-//=== Function borrarUsuarios ==============
+//=== Funcion borrarUsuarios ==============
+
 //buscamos por ID no por indice
-function borrarUsuario(ID,nombre) {
+function borrarUsuario(ID, nombre) {
+  const confirmDelete = confirm(
+    `Realmente desea borrar este usuario ${nombre}`
+  );
 
-  const confirmDelete= confirm(`Realmente desea borrar este usuario ${nombre}`)
-  
-  if(confirmDelete){
-  const indice = usersArray.findIndex((user) => user.id === ID);
-  usersArray.splice(indice, 1);
-  pintarUsuarios(usersArray);
-}
-borrarUsuario();
+  if (confirmDelete) {
+    const indice = usersArray.findIndex((user) => user.id === ID);
+    usersArray.splice(indice, 1);
+    pintarUsuarios(usersArray);
+    // -Actualizo usersArray
+    actulizarLocalStorage();
+  }
+} 
 
-//=== Function editarUsuario================
+
+//=== Funcion editarUsuario================
+
 // 1)INDICAR que el usuario no fue encontrado
 function editarUsuario(idBuscar) {
   //buscar-find((parametro)=> {funcion }) el usuario con ese ID y obtenerlo, segun el ID que me enviaron = al del usuario que estoy iterando
-    const userEdit = usersArray.find((usuario) => { //find(el-elemento-que-encuantra,indice-del elemento-que-esta-iterando )
-    if (usuario.id === idBuscar) { //si el usuario que estoy iterando en su prop.id es === al id que me enviaron en la funcion, solo en ese caso voy a hacer un true. 
+  const userEdit = usersArray.find((usuario) => {
+    //find(el-elemento-que-encuantra,indice-del elemento-que-esta-iterando )
+    if (usuario.id === idBuscar) {
+      //si el usuario que estoy iterando en su prop.id es === al id que me enviaron en la funcion, solo en ese caso voy a hacer un true.
       return true;
-     
     }
-  })
-  //if(!userEdit)otra forma de escribirlo, si el usuario !NO ES TRUE 
-      if (userEdit === undefined) {
-        Swal.fire("Error al editar", "No se pudo editar el usuario", "Error");//Libreria Swal.fire-TITULO, MENSAJE, ICONO (predefinido)
-        return; //para cortar la ejecucion de la function editarUsuario
-      }
+  });
+  //if(!userEdit)otra forma de escribirlo, si el usuario !NO ES TRUE
+  if (userEdit === undefined) {
+    Swal.fire("Error al editar", "No se pudo editar el usuario", "Error"); //Libreria Swal.fire-TITULO, MENSAJE, ICONO (predefinido)
+    return; //para cortar la ejecucion de la function editarUsuario
+  }
 
-// 2)RELLENAR el formulario con los datos del usuario a editar  (excepto contraseña)
- //const (el)elemento, userForm. tiene los imputs en la prop.elements
-  const el = userForm.elements;// seteo el input "hyden" name=id
+  // 2)RELLENAR el formulario con los datos del usuario a editar  (excepto contraseña)
+  //const (el)elemento, userForm. tiene los imputs en la prop.elements
+  const el = userForm.elements; // seteo el input "hyden" name=id
   el.id.value = userEdit.id; //el valor de ese input(id) esta el la const userEdit.id
   el.age.value = userEdit.age; //el valor de ese input(age) esta el la const userEdit.age
-  el.email.value = userEdit.email; 
+  el.email.value = userEdit.email;
   el.fullname.value = userEdit.fullname;
   el.age.value = userEdit.age;
-  el.active.checked = userEdit.active;//la propiedad del campo Activo es checked
+  el.active.checked = userEdit.active; //la propiedad del campo Activo es checked
   el.location.value = userEdit.location; //la propiedad location tiene que coincidir con el value= "Buenos Aires"
   el.image.value = userEdit.image;
   el.password.value = userEdit.password;
@@ -336,11 +361,11 @@ Cuando la persona toque el boton Editar cambiar el nombre del boton a "Editar  u
 submitBtn.classList.add("btn-edit"); //add(className): Agrega una clase al elemento. Si la clase ya existe, no se agregará nuevamente.
 submitBtn.innerText = "Editar usuario";
 
-
-
-
-
-
+/*============ Funcion actualizarLocalStorage========= */
+//seteamos sobre la misma key donde teniamos los usuarios el nuevo valor del usersArray (agregar, editar o borrar elemento del array)
+function actulizarLocalStorage() {
+  localStorage.setItem("users", Json.stringify(usersArray));
+}
 
 //Metodos (otro tema)
 const objeto = {
