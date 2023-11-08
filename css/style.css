@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 1200px;
 }
@@ -11,6 +17,26 @@ body {
     color: white;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(29, 116, 203);
+    color: white;
+}
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 1rem 1.25rem;
+    display: inline-block;
+    &:hover {
+        background-color: rgb(19, 68, 117);
+    }
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+}
 .user-table {
     width: 100%;
     border-collapse: collapse;
